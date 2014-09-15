@@ -1,0 +1,10 @@
+<title> Register </title>
+<h1> Register! Now!! </h1>
+
+<body>
+	<form action = "{% url 'blogcore:register' %}" method = "post">
+	{% csrf_token %}
+	{{ form }}
+	<input type = "submit" value = "Next" />
+	</form>
+</body>

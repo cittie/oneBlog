@@ -1,0 +1,16 @@
+<h2> {{ bloguser }} </h2>
+
+{% if bloguser.post_set %}
+	{% for post in bloguser.post_set.all %}
+		<p>{{ post.title }}</p>
+		<p>{{ post.content }}</p>
+			<ul>
+			{% if post.comment_set %}
+				{% for comment in post.comment_set.all %}
+					<ul>{{ comment.content }}</ul>
+					<ul><a href=" {% url 'blogcore:userdetail' comment.bloguser.id %} ">{{ comment.bloguser }}</a></ul>
+				{% endfor %}
+			{% endif %}
+			</ul>
+	{% endfor %}
+{% endif %}
