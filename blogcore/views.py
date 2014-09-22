@@ -1,8 +1,7 @@
 from django.views import generic
-from django import forms
-from blogcore.models import Bloguser, Post, Comment
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from blogcore.models import Bloguser, Post
+#from django.shortcuts import render
+#from django.http import HttpResponseRedirect
 
 class IndexView(generic.ListView):
     template_name = "blogcore/index.html"
@@ -30,20 +29,8 @@ class DetailView(generic.DetailView):
 class AboutView(generic.TemplateView):
     template_name = "blogcore/about.html"
     
-class RegisterView(generic.TemplateView):
-    template_name = "blogcore/register.html"    
-
-class NameForm(forms.Form):
-    register_name = forms.CharField(label = "Register Name", max_length = 16)
-    
-def get_register(request):
-    if request.method == "POST":
-        form = NameForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect('blogcore/index.html')
-    else:
-        form = NameForm()
-    
-    return render(request, 'blogcore/register.html', {'form': form})
-        
-         
+class RegisterCreate(generic.CreateView):
+    template_name = "blogcore/register.html" 
+    model = Bloguser
+    field = ['name']
+    success_url = '/blogcore/user'
