@@ -1,7 +1,9 @@
 from django.views import generic
 from blogcore.models import Bloguser, Post
-#from django.shortcuts import render
-#from django.http import HttpResponseRedirect
+from blogcore.forms import LoginForm
+#from django.shortcuts import render_to_response
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponse, HttpResponseRedirect
 
 class IndexView(generic.ListView):
     template_name = "blogcore/index.html"
@@ -34,3 +36,23 @@ class RegisterCreate(generic.CreateView):
     model = Bloguser
     field = ['name']
     success_url = '/blogcore/user'
+   
+def login_user(request):
+    username = password = ''
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        try:
+            user = authenticate(username = username, password = password)
+        except:
+            return HttpResponse("Error")
+        else:
+            if user.is_active:
+                login(request, user)
+                HttpResponseRedirect('/blogcore/user')
+            else:
+                return HttpResponse("Sorry!")
+            
+def test_view(request):
+    

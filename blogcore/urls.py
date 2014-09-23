@@ -8,4 +8,5 @@ urlpatterns = patterns('',
                        url(r'^user/(?P<pk>\d+)/$', views.UserDetailView.as_view(), name='userdetail'),
                        url(r'^about/$', views.AboutView.as_view(), name = 'about'),
                        url(r'^register/$', views.RegisterCreate.as_view(), name = 'register'),
+                       url(r'^login/$', views.login_user, name = "login"),
                        )

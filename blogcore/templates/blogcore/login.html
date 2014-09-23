@@ -1,0 +1,18 @@
+<head>
+	<title> Login </title>
+</head>
+
+<body>
+	{{ state }}
+	<form action="{% url 'blogcore:login' %} method="post">
+		{% if next %}
+		<input type="hidden" name="next" value=" {{ next }} "/>
+		{% endif %}
+		username:
+		<input type="text" name="username" value=" {{ username }} "/>
+		password:
+		<input type="password" name="password" value="" />
+		
+		<input type="submit" value="Login" />
+	</form>
+</body>
