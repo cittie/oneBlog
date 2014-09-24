@@ -1,11 +1,11 @@
 {% if blog_list %}
 	<ul>
 	{% for blog in blog_list %}
-		<li><a href=" {{ blog.id }} ">{{ blog.title }} </a></li>
+		<li><a href=" {{ blog.id }} ">{{ blog.title }} </a><t>{{ blog.bloguser }}</t></li>
 	{% endfor %}
 	</ul>
 {% else %}
-	<p>No blog are available!</p>
+	<p>No blog is available!</p>
 {% endif %}
 
 <a href = "{% url 'blogcore:register' %}">Register</a>

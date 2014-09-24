@@ -1,7 +1,7 @@
 from django.views import generic
 from blogcore.models import Bloguser, Post
 from blogcore.forms import LoginForm
-#from django.shortcuts import render_to_response
+from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -36,7 +36,7 @@ class RegisterCreate(generic.CreateView):
     model = Bloguser
     field = ['name']
     success_url = '/blogcore/user'
-   
+  
 def login_user(request):
     username = password = ''
     if request.POST:
@@ -54,5 +54,13 @@ def login_user(request):
             else:
                 return HttpResponse("Sorry!")
             
-def test_view(request):
-    
+def the_view(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect()
+    else:
+        form = LoginForm()
+        
+    return render(request, 'form_template.html', {'form': form})
+
