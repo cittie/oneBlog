@@ -23,6 +23,18 @@ def quick_create_comment():
     comment = create_comment('This is comment content', post, comment_user)
     return comment
 
+def quick_create_user_with_two_posts_and_four_comments():
+    bloguser = create_bloguser('One_Two_Four')
+    comment_user1 = create_bloguser('C1')
+    comment_user2 = create_bloguser('C2')
+    post1 = create_post('Post1', 'Post1 Content', bloguser)
+    post2 = create_post('Post2', 'Post2 Content', bloguser)
+    create_comment('This is comment1-1 content', post1, comment_user1)
+    create_comment('This is comment1-2 content', post1, comment_user2)
+    create_comment('This is comment2-1 content', post2, comment_user1)
+    create_comment('This is comment2-2 content', post2, comment_user2)
+    return bloguser
+
 class IndexViewTests(TestCase):
     
     def test_index_without_content(self):
@@ -88,3 +100,67 @@ class UserListTests(TestCase):
         self.assertEqual(response.status_code, 200)
         for string in contains:
             self.assertContains(response, string)
+    
+    def test_one_user(self):
+        user1 = create_bloguser("Judy")
+        contains = [user1.name]
+        
+        response = self.client.get(reverse('blogcore:userlist'))
+        
+        self.assertEqual(response.status_code, 200)
+        for string in contains:
+            self.assertContains(response, string)
+    
+    def test_twenty_users(self):
+        users = []
+        for i in range(20):
+            users.append(create_bloguser("User" + str(i)))
+        
+        contains = []
+        for i in range(10):
+            #contains.append(users[i].name)         #Ascending of views. 
+            contains.append(users[19 - i].name)     #Descending of views. 
+        
+        response = self.client.get(reverse('blogcore:userlist'))
+        
+        self.assertEqual(response.status_code, 200)
+        for string in contains:
+            self.assertContains(response, string)
+
+class UserDetailViewTests(TestCase):
+
+    def test_user_no_exists(self):
+        response = self.client.get(reverse('blogcore:userdetail', args = (1, )))
+        
+        self.assertEqual(response.status_code, 404)
+    
+    def user_with_one_post_and_one_comment(self):
+        comment = quick_create_comment()
+        post = comment.post
+        user = post.bloguser        
+        contains = [user.name, post.title, post.content, comment.content, comment.bloguser]
+        
+        response = self.client.get(reverse('blogcore:userdetail', args = (user.id, )))
+        
+        self.assertEqual(response.status_code, 200)
+        for string in contains:
+            self.assertContains(response, string)
+    
+    def user_with_multi_posts_and_multi_comment(self):
+        contains = []
+        user = quick_create_user_with_two_posts_and_four_comments()
+        contains.append(user.name)
+        for post in user.post_set.all:
+            contains.append(post.title)
+            contains.append(post.content)
+            for comment in post.comment_set.all:
+                contains.append(comment.content)
+                contains.apend(comment.bloguser.name)
+        
+        response = self.client.get(reverse('blogcore:userdetail', args = (user.id, )))
+        
+        self.assertEqual(response.status_code, 200)
+        for string in contains:
+            self.assertContains(response, string)
+                
+        
