@@ -1,0 +1,13 @@
+<H1> User List </H1>
+
+{% if profile_list %}
+	<ul>
+	{% for user_profile in profile_list %}
+		<li><a href=" {% url 'blogcore:profile_detail' user_profile.id %} "> {{ user_profile }} </a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No users!</p>
+{% endif %}
+
+

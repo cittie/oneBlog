@@ -1,0 +1,11 @@
+{% if post_list %}
+	<ul>
+	{% for post in post_list %}
+		<li><a href=" {{ post.id }} ">{{ post.title }} </a><a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile.user.username }}  </a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No blogs!</p>
+{% endif %}
+
+<a href = "{% url 'blogcore:about' %}">About</a>

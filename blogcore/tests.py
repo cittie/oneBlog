@@ -1,44 +1,95 @@
 from django.test import TestCase
-from blogcore.models import Bloguser, Post, Comment
+from django.contrib.auth.models import User
+from blogcore.models import UserProfile, Post, Comment
 from django.core.urlresolvers import reverse
 
-def create_bloguser(name):
-    return Bloguser.objects.create(name = name)
+def create_user(username, password):
+    return User.objects.create(username = username, password = password)
 
-def create_post(title, content, bloguser):
-    return Post.objects.create(title = title, content = content, bloguser = bloguser)
+def create_user_profile(user):
+    return UserProfile.objects.create(user = user)
 
-def create_comment(content, post, bloguser):
-    return Comment.objects.create(content = content, post = post, bloguser = bloguser)
+def create_post(title, content, user_profile):
+    return Post.objects.create(title = title, content = content, user_profile = user_profile)
 
-def quick_create_post_with_bloguser():
-    bloguser = create_bloguser('Joen')
-    post = create_post('Post title', 'This is a post content', bloguser)
+def create_comment(content, post, user_profile):
+    return Comment.objects.create(content = content, post = post, user_profile = user_profile)
+    
+def quick_create_post_with_user():
+    user = create_user('joen', 'password')
+    user_profile = create_user_profile(user)
+    post = create_post('Post title', 'This is a post content', user_profile)
     return post
 
 def quick_create_comment():
-    bloguser = create_bloguser('Joen')
-    comment_user = create_bloguser('Yee')
-    post = create_post('Post with comment title', 'This is a content with comment content', bloguser)
-    comment = create_comment('This is comment content', post, comment_user)
+    user = create_user('joen', 'password')
+    user_profile = create_user_profile(user)
+    comment_user = create_user('Yee', 'password')
+    comment_user_profile = create_user_profile(comment_user)
+    post = create_post('Post with comment title', 'This is a content with comment content', user_profile)
+    comment = create_comment('This is comment content', post, comment_user_profile)
     return comment
 
 def quick_create_user_with_two_posts_and_four_comments():
-    bloguser = create_bloguser('One_Two_Four')
-    comment_user1 = create_bloguser('C1')
-    comment_user2 = create_bloguser('C2')
-    post1 = create_post('Post1', 'Post1 Content', bloguser)
-    post2 = create_post('Post2', 'Post2 Content', bloguser)
-    create_comment('This is comment1-1 content', post1, comment_user1)
-    create_comment('This is comment1-2 content', post1, comment_user2)
-    create_comment('This is comment2-1 content', post2, comment_user1)
-    create_comment('This is comment2-2 content', post2, comment_user2)
-    return bloguser
+    user = create_user('one_two_four', 'password')
+    user_profile = create_user_profile(user)
+    comment_user1 = create_user('C1', 'password')
+    comment_user1_profile = create_user_profile(comment_user1)
+    comment_user2 = create_user('C2', 'password')
+    comment_user2_profile = create_user_profile(comment_user2)
+    post1 = create_post('Post1', 'Post1 Content', user_profile)
+    post2 = create_post('Post2', 'Post2 Content', user_profile)
+    create_comment('This is comment1-1 content', post1, comment_user1_profile)
+    create_comment('This is comment1-2 content', post1, comment_user2_profile)
+    create_comment('This is comment2-1 content', post2, comment_user1_profile)
+    create_comment('This is comment2-2 content', post2, comment_user2_profile)
+    return user
+
+class RegisterTest(TestCase):   
+    
+    def register_normally(self):    #Add 'test_' to active the testcase
+        username = "user1"
+        password = "password"
+        response = self.client.get(reverse('blogcore:register'), {'username': username, 'password': password})
+        print(response.content)
+        self.assertContains(response, "Success")
+        
+    def register_with_incorrect_username(self):     #Add 'test_' to active the testcase
+        username = "hahaha this name is incorrect"
+        password = "password"
+        response = self.client.get(reverse('blogcore:register'), {'username': username, 'password': password})
+        print(response.content)
+        self.assertContains(response, "Fail")
+                
+    def register_with_incorrect_password(self):     #Add 'test_' to active the testcase
+        username = "user1"
+        password = ""
+        response = self.client.get(reverse('blogcore:register'), {'username': username, 'password': password})
+        print(response.content)
+        self.assertContains(response, "Fail")
+                
+class LoginTest(TestCase):
+    
+    def user_with_incorrect_username(self):        #Add 'test_' to active the testcase
+        response = self.client.get(reverse('blogcore:login'), {'username': 'no_such_name', 'password': 'password'})
+        print(response.content)
+        self.assertContains(response, "Sorry")
+        
+    def user_with_incorrect_passwrod(self):         #Add 'test_' to active the testcase
+        response = self.client.get(reverse('blogcore:login'), {'username': 'user1', 'password': 'incorrect_password'})
+        print(response.content)        
+        self.assertContains(response, "Sorry")
+            
+    def user_with_correct_information(self):            #Add 'test_' to active the testcase
+        create_user("user1", "password")
+        response = self.client.get(reverse('blogcore:login'), {'username': 'user1', 'password': 'password'})
+        print(response.content)        
+        self.assertRedirects(response, '/blogcore/user')
 
 class IndexViewTests(TestCase):
     
     def test_index_without_content(self):
-        contains = ['No blogs!', 'Register', 'About']
+        contains = ['No blogs!', 'About']
         
         response = self.client.get(reverse('blogcore:index'))
         #print(response.content)     #Just want to know what exactly the response is...
@@ -48,8 +99,8 @@ class IndexViewTests(TestCase):
             self.assertContains(response, string)
 
     def test_index_with_blogs(self):
-        post = quick_create_post_with_bloguser()
-        contains = [post.title, post.bloguser.name]
+        post = quick_create_post_with_user()
+        contains = [post.title, post.user_profile.user.username]
         not_contains = [post.content]
         
         response = self.client.get(reverse('blogcore:index'))
@@ -60,21 +111,22 @@ class IndexViewTests(TestCase):
             self.assertContains(response, string)
         for string in not_contains:
             self.assertNotContains(response, string)
-    
-class DetailViewTests(TestCase):
+
+class PostDetailViewTests(TestCase):
     
     def test_target_not_exists(self):
-        response = self.client.get(reverse('blogcore:detail', args = (1, )))
+        response = self.client.get(reverse('blogcore:post_detail', args = (1, )))
         #print(response.content)
         
         self.assertEqual(response.status_code, 404)
     
     def test_one_target_without_comment(self):
-        post = quick_create_post_with_bloguser()
-        contains = [post.title, post.content, post.bloguser.name]
-        
-        response = self.client.get(reverse('blogcore:detail', args = (post.id, )))
-        
+        post = quick_create_post_with_user()
+        contains = [post.title, post.content, post.user_profile.user.username]
+
+        response = self.client.get(reverse('blogcore:post_detail', args = (post.id, )))
+        #print(response.content)
+                
         self.assertEqual(response.status_code, 200)
         for string in contains:
             self.assertContains(response, string)
@@ -82,10 +134,10 @@ class DetailViewTests(TestCase):
     def test_one_target_with_comment(self):
         comment = quick_create_comment()
         post = comment.post
-        contains = [post.title, post.content, post.bloguser.name, comment.content, comment.bloguser.name]
-        
-        response = self.client.get(reverse('blogcore:detail', args = (post.id, )))
-        
+        contains = [post.title, post.content, post.user_profile.user.username, comment.content, comment.user_profile.user.username]
+
+        response = self.client.get(reverse('blogcore:post_detail', args = (post.id, )))
+        #print(response.content)        
         self.assertEqual(response.status_code, 200)
         for string in contains:
             self.assertContains(response, string)
@@ -93,19 +145,22 @@ class DetailViewTests(TestCase):
 class UserListTests(TestCase):
     
     def test_no_user(self):
-        contains = ['No blogusers!']
+        contains = ['No users!']
 
-        response = self.client.get(reverse('blogcore:userlist'))
+        response = self.client.get(reverse('blogcore:profile_list'))
         
         self.assertEqual(response.status_code, 200)
         for string in contains:
             self.assertContains(response, string)
     
     def test_one_user(self):
-        user1 = create_bloguser("Judy")
-        contains = [user1.name]
+        user1 = create_user("judy", "password")
+        create_user_profile(user1)
+        contains = [user1.username]
+        user1.save()
         
-        response = self.client.get(reverse('blogcore:userlist'))
+        response = self.client.get(reverse('blogcore:profile_list'))
+        #print(response.content)  
         
         self.assertEqual(response.status_code, 200)
         for string in contains:
@@ -114,14 +169,18 @@ class UserListTests(TestCase):
     def test_twenty_users(self):
         users = []
         for i in range(20):
-            users.append(create_bloguser("User" + str(i)))
+            user = create_user("user" + str(i), "password")
+            create_user_profile(user)
+            users.append(user)
+            user.save()
         
         contains = []
         for i in range(10):
-            #contains.append(users[i].name)         #Ascending of views. 
-            contains.append(users[19 - i].name)     #Descending of views. 
+            #contains.append(users[i].username)         #Ascending of views. 
+            contains.append(users[19 - i].username)     #Descending of views. 
         
-        response = self.client.get(reverse('blogcore:userlist'))
+        response = self.client.get(reverse('blogcore:profile_list'))
+        #print(response.content)
         
         self.assertEqual(response.status_code, 200)
         for string in contains:
@@ -130,37 +189,42 @@ class UserListTests(TestCase):
 class UserDetailViewTests(TestCase):
 
     def test_user_no_exists(self):
-        response = self.client.get(reverse('blogcore:userdetail', args = (1, )))
+        response = self.client.get(reverse('blogcore:profile_detail', args = (1, )))
         
         self.assertEqual(response.status_code, 404)
     
-    def user_with_one_post_and_one_comment(self):
+    def test_user_with_one_post_and_one_comment(self):
         comment = quick_create_comment()
         post = comment.post
-        user = post.bloguser        
-        contains = [user.name, post.title, post.content, comment.content, comment.bloguser]
+        user = post.user_profile.user        
+        contains = [user.username, post.title, post.content, comment.content, comment.user_profile.user.username]
         
-        response = self.client.get(reverse('blogcore:userdetail', args = (user.id, )))
+        response = self.client.get(reverse('blogcore:profile_detail', args = (post.user_profile.id, )))
         
         self.assertEqual(response.status_code, 200)
         for string in contains:
             self.assertContains(response, string)
     
-    def user_with_multi_posts_and_multi_comment(self):
+    def test_user_with_multi_posts_and_multi_comment(self):
         contains = []
         user = quick_create_user_with_two_posts_and_four_comments()
-        contains.append(user.name)
-        for post in user.post_set.all:
+        user_profile = UserProfile.objects.get(user = user)
+        contains.append(user.username)
+        
+        posts = Post.objects.all().filter(user_profile = user_profile)
+        for post in posts:
             contains.append(post.title)
             contains.append(post.content)
-            for comment in post.comment_set.all:
+            comments = Comment.objects.all().filter(post = post)
+            for comment in comments:
                 contains.append(comment.content)
-                contains.apend(comment.bloguser.name)
+                contains.append(comment.user_profile.user.username)
         
-        response = self.client.get(reverse('blogcore:userdetail', args = (user.id, )))
+        response = self.client.get(reverse('blogcore:profile_detail', args = (user_profile.id, )))
         
         self.assertEqual(response.status_code, 200)
         for string in contains:
             self.assertContains(response, string)
-                
+
+
         

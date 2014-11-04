@@ -1,16 +1,18 @@
-<h2> {{ bloguser }} </h2>
+<h2> {{ user_profile }} </h2>
 
-{% if bloguser.post_set %}
-	{% for post in bloguser.post_set.all %}
+<body>
+{% if user_profile.post_set %}
+	{% for post in user_profile.post_set.all %}
 		<p>{{ post.title }}</p>
 		<p>{{ post.content }}</p>
 			<ul>
 			{% if post.comment_set %}
 				{% for comment in post.comment_set.all %}
 					<ul>{{ comment.content }}</ul>
-					<ul><a href=" {% url 'blogcore:userdetail' comment.bloguser.id %} ">{{ comment.bloguser }}</a></ul>
+					<ul><a href=" {% url 'blogcore:profile_detail' comment.user_profile.id %} ">{{ comment.user_profile }}</a></ul>
 				{% endfor %}
 			{% endif %}
 			</ul>
 	{% endfor %}
 {% endif %}
+</body>

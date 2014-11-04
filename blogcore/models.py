@@ -1,21 +1,18 @@
 from django.db import models
-from django.core import validators
+from django.contrib.auth.models import User
 
-class Bloguser(models.Model):
-    name = models.CharField(max_length = 64,
-                            validators = [validators.RegexValidator(regex = '^[a-zA-Z0-9]*$', 
-                                                                    message = 'Username must be Alphanumeric', 
-                                                                    code = 'invalid_username'),
-                                            validators.MinLengthValidator(4),
-                                            validators.MaxLengthValidator(14)]
-                            )
-    created_date = models.DateTimeField(auto_now_add = True)
+class UserProfile(models.Model):
+    user = models.ForeignKey(User)
+    nickname = models.CharField(max_length = 24)
+    gender = models.IntegerField(default = 2)
+    avatar = models.IntegerField(default = 0)      # 0 = female, 1 = male, 2 = others
     
     def __str__(self):
-        return self.name
+        return self.user.username
     
+ 
 class Post(models.Model):
-    bloguser = models.ForeignKey(Bloguser)
+    user_profile = models.ForeignKey(UserProfile)
     title = models.CharField(max_length = 60)
     content = models.TextField()
     created_date = models.DateTimeField(auto_now_add = True)
@@ -25,7 +22,7 @@ class Post(models.Model):
     
 class Comment(models.Model):
     post = models.ForeignKey(Post)
-    bloguser = models.ForeignKey(Bloguser)
+    user_profile = models.ForeignKey(UserProfile)
     content = models.TextField(max_length = 250)
     created_date = models.DateTimeField(auto_now_add = True)
         

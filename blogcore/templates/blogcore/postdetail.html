@@ -1,0 +1,15 @@
+<h1> {{ post }} </h1>
+
+<body> 
+	{{ post.content }}
+	<p><a href =" {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}</a></p>
+	<ul>
+		{% for comment in post.comment_set.all %}
+			<li>
+			{{ comment }}
+			<p> {{ comment.user_profile }} </p>
+			</li>
+		{% endfor %}
+	</ul>
+
+</body>

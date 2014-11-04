@@ -1,5 +1,5 @@
 from django.contrib import admin
-from blogcore.models import Bloguser, Post, Comment
+from blogcore.models import UserProfile, Post, Comment
 
 class CommentInLine(admin.TabularInline):
     model = Comment
@@ -10,14 +10,12 @@ class PostInLine(admin.TabularInline):
     model = Post
     extra = 1
     
-class BloguserAdmin(admin.ModelAdmin):
-    fields = ('name', 'create_date')
-    inlines = [PostInLine, CommentInLine]
-    search_fields = ['name']
-
 class PostAdmin(admin.ModelAdmin):
     inlines = [CommentInLine]
     search_fields = ['title']
-    
-admin.site.register(Bloguser, BloguserAdmin)
+
+class ProfileAdmin(admin.ModelAdmin):
+    inlines = [PostInLine]
+
+admin.site.register(UserProfile, ProfileAdmin)
 admin.site.register(Post, PostAdmin)
