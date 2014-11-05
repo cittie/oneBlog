@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from blogcore.models import UserProfile, Post, Comment
 from django.core.urlresolvers import reverse
 
@@ -47,26 +48,22 @@ def quick_create_user_with_two_posts_and_four_comments():
 
 class RegisterTest(TestCase):   
     
-    def register_normally(self):    #Add 'test_' to active the testcase
-        username = "user1"
-        password = "password"
-        response = self.client.get(reverse('blogcore:register'), {'username': username, 'password': password})
-        print(response.content)
-        self.assertContains(response, "Success")
+    def test_register_normally(self):
+        response = self.client.post(reverse('blogcore:register'), {'username': 'user1', 'password1': 'password', 'password2': 'password'})
+        #print(response.content)
+        self.assertRedirects(response, reverse('blogcore:profile_list'))
         
-    def register_with_incorrect_username(self):     #Add 'test_' to active the testcase
-        username = "hahaha this name is incorrect"
-        password = "password"
-        response = self.client.get(reverse('blogcore:register'), {'username': username, 'password': password})
-        print(response.content)
-        self.assertContains(response, "Fail")
+    def test_register_with_incorrect_username(self):
+        error_message = "This value may contain only letters, numbers and @/./+/-/_ characters."
+        response = self.client.post(reverse('blogcore:register'), {'username': 'XX OO 1982 101 hoho', 'password1': 'password', 'password2': 'password'})
+        #print(response.content)
+        self.assertContains(response, error_message)
                 
-    def register_with_incorrect_password(self):     #Add 'test_' to active the testcase
-        username = "user1"
-        password = ""
-        response = self.client.get(reverse('blogcore:register'), {'username': username, 'password': password})
-        print(response.content)
-        self.assertContains(response, "Fail")
+    def test_register_with_incorrect_password(self):
+        error_message = "This field is required."
+        response = self.client.post(reverse('blogcore:register'), {'username': 'user1', 'password1': '', 'password2': ''})
+        #print(response.content)
+        self.assertContains(response, error_message)
                 
 class LoginTest(TestCase):
     

@@ -1,7 +1,7 @@
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from blogcore.models import Post, UserProfile
 
 from django.http import HttpResponseRedirect
@@ -44,12 +44,11 @@ def register(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             new_user = form.save()
-            return HttpResponseRedirect("/books/")
+            UserProfile.objects.create(user = new_user)            
+            return redirect('blogcore:profile_list')
     else:
         form = UserCreationForm()
-    return render(request, "blogcore/register.html", {
-        'form': form,
-    })
+    return render(request, 'blogcore/register.html', {'form': form})
  
 def login_view(request):
     username = password = ''

@@ -9,6 +9,7 @@ urlpatterns = patterns('',
                        url(r'^profiles/$', views.UserListView.as_view(), name = 'profile_list'),
                        url(r'^profile/(?P<pk>\d+)/$', views.UserDetailView.as_view(), name = 'profile_detail'),
                        url(r'^about/$', views.AboutView.as_view(), name = 'about'),
+                       url(r'^register/$', views.register, name = 'register'),
                        url(r'^login/$', login),
                        url(r'^logout/$', logout),
                        )

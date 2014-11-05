@@ -8,8 +8,7 @@ class UserProfile(models.Model):
     avatar = models.IntegerField(default = 0)      # 0 = female, 1 = male, 2 = others
     
     def __str__(self):
-        return self.user.username
-    
+        return self.user.username    
  
 class Post(models.Model):
     user_profile = models.ForeignKey(UserProfile)
