@@ -49,7 +49,8 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'blogcore/register.html', {'form': form})
- 
+
+''' 
 def login_view(request):
     username = password = ''
     if request.POST:
@@ -67,4 +68,4 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/blogcore/about')           
-
+'''

@@ -9,4 +9,7 @@
 	<p>No blogs!</p>
 {% endif %}
 
-<a href = "{% url 'blogcore:about' %}">About</a>
+<ul><a href = "{% url 'blogcore:register' %}">Register</a></ul>
+<ul><a href = "{% url 'blogcore:login' %}">Login</a></ul>
+<ul><a href = "{% url 'blogcore:logout' %}">Logout</a></ul>
+<ul><a href = "{% url 'blogcore:about' %}">About</a></ul>

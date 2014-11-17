@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from blogcore.models import UserProfile, Post, Comment
 from django.core.urlresolvers import reverse
 
@@ -51,18 +50,21 @@ class RegisterTest(TestCase):
     def test_register_normally(self):
         response = self.client.post(reverse('blogcore:register'), {'username': 'user1', 'password1': 'password', 'password2': 'password'})
         #print(response.content)
+        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('blogcore:profile_list'))
         
     def test_register_with_incorrect_username(self):
         error_message = "This value may contain only letters, numbers and @/./+/-/_ characters."
         response = self.client.post(reverse('blogcore:register'), {'username': 'XX OO 1982 101 hoho', 'password1': 'password', 'password2': 'password'})
         #print(response.content)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, error_message)
                 
     def test_register_with_incorrect_password(self):
         error_message = "This field is required."
         response = self.client.post(reverse('blogcore:register'), {'username': 'user1', 'password1': '', 'password2': ''})
         #print(response.content)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, error_message)
                 
 class LoginTest(TestCase):

@@ -10,6 +10,6 @@ urlpatterns = patterns('',
                        url(r'^profile/(?P<pk>\d+)/$', views.UserDetailView.as_view(), name = 'profile_detail'),
                        url(r'^about/$', views.AboutView.as_view(), name = 'about'),
                        url(r'^register/$', views.register, name = 'register'),
-                       url(r'^login/$', login),
-                       url(r'^logout/$', logout),
+                       url(r'^login/$', login, name = 'login'),
+                       url(r'^logout/$', logout, {'next_page': '/blogcore/about'}, name = 'logout'),
                        )
