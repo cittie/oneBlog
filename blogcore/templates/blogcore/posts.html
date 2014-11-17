@@ -1,3 +1,7 @@
+{% load staticfiles %}
+
+<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+
 {% if post_list %}
 	<ul>
 	{% for post in post_list %}

@@ -1,15 +1,32 @@
+{% load staticfiles %}
+
+<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+
+<head>
+	<title> OneBlog </title>
+	<H1> OneBlog! </H1>
+</head>
+
+<body>
+
 {% if post_list %}
 	<ul>
+	<post_list>
 	{% for post in post_list %}
 		<li><a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post }} </a><t>
 		<a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}  </t></a></li>
 	{% endfor %}
+	</post_list>
 	</ul>
 {% else %}
-	<p>No blogs!</p>
+	<post_list>
+		<p>No blogs!</p>
+	</post_list>
 {% endif %}
 
-<ul><a href = "{% url 'blogcore:register' %}">Register</a></ul>
-<ul><a href = "{% url 'blogcore:login' %}">Login</a></ul>
-<ul><a href = "{% url 'blogcore:logout' %}">Logout</a></ul>
-<ul><a href = "{% url 'blogcore:about' %}">About</a></ul>
+
+<div><a href = "{% url 'blogcore:register' %}">Register</a></div>
+<div><a href = "{% url 'blogcore:login' %}">Login</a></div>
+<div><a href = "{% url 'blogcore:logout' %}">Logout</a></div>
+<div><a href = "{% url 'blogcore:about' %}">About</a></div>
+</body>
