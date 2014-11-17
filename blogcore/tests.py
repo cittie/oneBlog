@@ -69,28 +69,34 @@ class RegisterTest(TestCase):
                 
 class LoginTest(TestCase):
     
-    def user_with_incorrect_username(self):        #Add 'test_' to active the testcase
-        response = self.client.get(reverse('blogcore:login'), {'username': 'no_such_name', 'password': 'password'})
-        print(response.content)
-        self.assertContains(response, "Sorry")
+    def test_user_with_incorrect_username(self):        #Add 'test_' to active the testcase
+        response = self.client.post(reverse('blogcore:login'), {'username': 'no_such_name', 'password': 'password'})
+        #print(response.content)
+        self.assertContains(response, "Sorry, that's not a valid username or password")
         
-    def user_with_incorrect_passwrod(self):         #Add 'test_' to active the testcase
-        response = self.client.get(reverse('blogcore:login'), {'username': 'user1', 'password': 'incorrect_password'})
-        print(response.content)        
-        self.assertContains(response, "Sorry")
+    def test_user_with_incorrect_passwrod(self):         #Add 'test_' to active the testcase
+        response = self.client.post(reverse('blogcore:login'), {'username': 'user1', 'password': 'incorrect_password'})
+        #print(response.content)        
+        self.assertContains(response, "Sorry, that's not a valid username or password")
             
-    def user_with_correct_information(self):            #Add 'test_' to active the testcase
+    def test_user_with_correct_information(self):            #Add 'test_' to active the testcase
         create_user("user1", "password")
-        response = self.client.get(reverse('blogcore:login'), {'username': 'user1', 'password': 'password'})
-        print(response.content)        
-        self.assertRedirects(response, '/blogcore/user')
+        response_post = self.client.post(reverse('blogcore:login'), {'username': 'user1', 'password': 'password'})
+        self.assertEqual(response_post.status_code, 200)
+        
+class LogoutTest(TestCase):
+    
+    def test_user_logout(self):
+        response = self.client.get(reverse('blogcore:logout'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], 'http://testserver/blogcore/login') 
+        #self.assertRedirects(response, '/blogcore/login')    #Django use 302 instead of redirect.    
 
 class IndexViewTests(TestCase):
     
     def test_index_without_content(self):
-        contains = ['No blogs!', 'About']
-        
-        response = self.client.get(reverse('blogcore:index'))
+        contains = ['No blogs!', 'About']       
+        response = self.client.get(reverse('blogcore:index'))        
         #print(response.content)     #Just want to know what exactly the response is...
         
         self.assertEqual(response.status_code, 200)

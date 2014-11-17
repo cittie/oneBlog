@@ -11,5 +11,5 @@ urlpatterns = patterns('',
                        url(r'^about/$', views.AboutView.as_view(), name = 'about'),
                        url(r'^register/$', views.register, name = 'register'),
                        url(r'^login/$', login, name = 'login'),
-                       url(r'^logout/$', logout, {'next_page': '/blogcore/about'}, name = 'logout'),
+                       url(r'^logout/$', logout, {'next_page': '/blogcore/login'}, name = 'logout'),
                        )
