@@ -13,6 +13,21 @@ body {
 	/* background: #58FAF4; */
 	}
 
+post {
+	display: inline-block;
+	font: bold 20px Arial;
+	}
+	
+comment {
+	display: inline-block;
+	font: bold 22px Helvetica;
+	}
+
+profile {
+	display: inline-block;
+	font: bold 24px Time New Rome;
+	}
+	
 post_list {
 	display: inline-block;
 	padding: 16px;
@@ -25,7 +40,7 @@ post_list {
 	box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 	font: bold 14px/18px Helvetica, Arial, sans-serif;
 	color: #000;
-	background: #F5A9F2;
+	background: #58FAF4;
 	}
 	
 div {

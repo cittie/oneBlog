@@ -11,12 +11,13 @@
 
 {% if post_list %}
 	<ul>
-	<post_list>
 	{% for post in post_list %}
-		<li><a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post }} </a><t>
-		<a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}  </t></a></li>
+		<li><post_list>
+			<post><a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post }} </a></post>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<profile><a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}  </a></profile>
+		</li></post_list>
 	{% endfor %}
-	</post_list>
 	</ul>
 {% else %}
 	<post_list>

@@ -1,0 +1,15 @@
+{% load staticfiles %}
+
+<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+
+{% block title %}Create an post{% endblock %}
+
+{% block content %}
+  <h1>Create an post</h1>
+
+  <form action="" method="post">
+      {% csrf_token %}
+	  {{ form.as_p }}
+      <input type="submit" value="Create the post">
+  </form>
+{% endblock %}

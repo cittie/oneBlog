@@ -69,17 +69,17 @@ class RegisterTest(TestCase):
                 
 class LoginTest(TestCase):
     
-    def test_user_with_incorrect_username(self):        #Add 'test_' to active the testcase
+    def test_user_with_incorrect_username(self):
         response = self.client.post(reverse('blogcore:login'), {'username': 'no_such_name', 'password': 'password'})
         #print(response.content)
         self.assertContains(response, "Sorry, that's not a valid username or password")
         
-    def test_user_with_incorrect_passwrod(self):         #Add 'test_' to active the testcase
+    def test_user_with_incorrect_passwrod(self):
         response = self.client.post(reverse('blogcore:login'), {'username': 'user1', 'password': 'incorrect_password'})
         #print(response.content)        
         self.assertContains(response, "Sorry, that's not a valid username or password")
             
-    def test_user_with_correct_information(self):            #Add 'test_' to active the testcase
+    def test_user_with_correct_information(self):
         create_user("user1", "password")
         response_post = self.client.post(reverse('blogcore:login'), {'username': 'user1', 'password': 'password'})
         self.assertEqual(response_post.status_code, 200)
@@ -231,5 +231,49 @@ class UserDetailViewTests(TestCase):
         for string in contains:
             self.assertContains(response, string)
 
-
+'''
+class PostCreationTest(TestCase):
+    
+    def test_post_create_without_login(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
         
+    def test_post_create_with_login(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_post_create_with_empty_title(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_post_create_with_empty_content(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_post_create_correctly(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+
+class PostEditTest(TestCase):
+    
+    def test_post_edit_without_login(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+        
+    def test_post_edit_with_login(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_post_edit_with_empty_title(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_post_edit_with_empty_content(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_post_edit_correctly(self):
+        response = self.client.get(reverse('blogcore:post_edit', args = ()))
+        self.assertEqual(response.status_code, 200)
+        
+'''  
