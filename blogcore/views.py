@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from blogcore.models import Post, UserProfile, PostForm, CommentForm
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
+from xlrd import formula
 
 class IndexView(ListView):
     template_name = "blogcore/index.html"
@@ -61,3 +62,11 @@ class PostCreateView(CreateView):
         post.user_profile = UserProfile.objects.get(user = self.request.user)
         post.save()
         return redirect('blogcore:profile_list')
+
+class PostUpdateView(UpdateView):
+    model = Post
+    form_class = PostForm
+    fields = ['title', 'content']
+    template_name = "blogcore/postedit.html"
+    success_url = '/blogcore/posts/'
+ 
