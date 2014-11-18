@@ -37,4 +37,5 @@ class PostForm(ModelForm):
 class CommentForm(ModelForm):
     class Meta:
         model = Comment
+        exclude = ['user_profile']
         

@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from blogcore.models import UserProfile, Post, Comment
+from blogcore.models import UserProfile, Post, Comment, PostForm, CommentForm
 from django.core.urlresolvers import reverse
+from django.http import HttpResponsePermanentRedirect
 
 def create_user(username, password):
     return User.objects.create(username = username, password = password)
@@ -45,7 +46,7 @@ def quick_create_user_with_two_posts_and_four_comments():
     create_comment('This is comment2-2 content', post2, comment_user2_profile)
     return user
 
-class RegisterTest(TestCase):   
+class RegisterTest(TestCase):
     
     def test_register_normally(self):
         response = self.client.post(reverse('blogcore:register'), {'username': 'user1', 'password1': 'password', 'password2': 'password'})
@@ -231,49 +232,37 @@ class UserDetailViewTests(TestCase):
         for string in contains:
             self.assertContains(response, string)
 
-'''
-class PostCreationTest(TestCase):
+class UserAutheticationTest(TestCase):
+    
+    def setUp(self):
+        self.client.post(reverse('blogcore:logout'))        
     
     def test_post_create_without_login(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
+        response = self.client.post(reverse('blogcore:post_create'), {'title': 'title', 'content': 'content'})
+        self.assertRedirects(response, '/blogcore/login?next=/blogcore/posts/create/', status_code = 302, target_status_code = 301, msg_prefix = '')
         
-    def test_post_create_with_login(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
+    def test_post_edit_without_login(self):
+        post = quick_create_post_with_user()
+        response = self.client.get(reverse('blogcore:post_edit', args = (post.id, )))
+        self.assertRedirects(response, '/blogcore/login?next=/blogcore/post/1/edit/', status_code = 302, target_status_code = 301, msg_prefix = '')
+
+class PostCreationTest(TestCase): 
+    def setUp(self):
+        create_user('user', 'password')
+        self.client.post(reverse('blogcore:login'), {'user': 'user', 'password': 'password'})        
     
-    def test_post_create_with_empty_title(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
-    
-    def test_post_create_with_empty_content(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
-    
-    def test_post_create_correctly(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
+    def test_post_create_correct(self):
+        response = self.client.post(reverse('blogcore:post_create'), {'title': 'title', 'content': 'content'})
+
 
 class PostEditTest(TestCase):
+    def setUp(self):
+        create_user('user', 'password')
+        self.client.post(reverse('blogcore:login'), {'user': 'user', 'password': 'password'}) 
     
     def test_post_edit_without_login(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
+        post = quick_create_post_with_user()
+        response = self.client.get(reverse('blogcore:post_edit', args = (post.id, )))
+
         
-    def test_post_edit_with_login(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
-    
-    def test_post_edit_with_empty_title(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
-    
-    def test_post_edit_with_empty_content(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
-    
-    def test_post_edit_correctly(self):
-        response = self.client.get(reverse('blogcore:post_edit', args = ()))
-        self.assertEqual(response.status_code, 200)
-        
-'''  
+
