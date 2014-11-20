@@ -3,10 +3,9 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from blogcore.models import Post, UserProfile, PostForm, CommentForm
-from django.http import HttpResponseRedirect
+from blogcore.models import Post, UserProfile, Comment, PostForm, CommentForm
 from django.core.urlresolvers import reverse, reverse_lazy
-from xlrd import formula
+
 
 class IndexView(ListView):
     template_name = "blogcore/index.html"
@@ -69,4 +68,21 @@ class PostUpdateView(UpdateView):
     fields = ['title', 'content']
     template_name = "blogcore/postedit.html"
     success_url = '/blogcore/posts/'
- 
+
+'''
+class CommentCreateView(CreateView):        #Function is not active
+    model = Comment
+    form_class = CommentForm
+    template_name = "blogcore/commentcreate.html"
+    
+    def form_valid(self, form):
+        comment = form.save(commit = False)
+        comment.user_profile = UserProfile.objects.get(user = self.request.user)
+        comment.save()
+        return redirect('blogcore:post_list')
+'''
+def comment_create(request, post_id):
+    post = get_object_or_404(Post, pk = post_id)
+    content = request.POST['content']
+    Comment.objects.create(post = post, content = content, user = request.user)
+    return redirect(reverse('blogcore:post_detail', args = (post.id, ))) 

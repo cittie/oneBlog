@@ -8,6 +8,7 @@
 <body> 
 	{{ post.content }}
 	<p><a href =" {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}</a></p>
+	<p><a href = " {% url 'blogcore:post_edit' post.id %} "> Edit </a></p>
 	<ul>
 		{% for comment in post.comment_set.all %}
 			<li>
@@ -16,6 +17,18 @@
 			</li>
 		{% endfor %}
 	</ul>
-	
-	<p><a href = " {% url 'blogcore:post_edit' post.id %} "> Edit </a></p>
+
+	<!---
+	<div id = "add_comment"> Add a comment </div>
+	<form action = "{% url 'blogcore:comment_create' post.id%}" method = "POST" >
+	{% csrf_token %}
+		<dive id="comment_form">
+		<p><input type="field" name="comment" </p>
+		</div>
+		<div id = "submit"><input type = "submit" value = "Submit"></div>
+	</form>
+	--->
+	{% block content %}
+	{% endblock %}
+
 </body>

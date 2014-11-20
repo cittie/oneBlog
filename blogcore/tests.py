@@ -4,9 +4,6 @@ from blogcore.models import UserProfile, Post, Comment, PostForm, CommentForm
 from django.core.urlresolvers import reverse
 from django.http import HttpResponsePermanentRedirect
 
-def create_user(username, password):
-    return User.objects.create(username = username, password = password)
-
 def create_user_profile(user):
     return UserProfile.objects.create(user = user)
 
@@ -17,26 +14,26 @@ def create_comment(content, post, user_profile):
     return Comment.objects.create(content = content, post = post, user_profile = user_profile)
     
 def quick_create_post_with_user():
-    user = create_user('joen', 'password')
+    user = User.objects.create_user('joen', email = None, password = 'password')
     user_profile = create_user_profile(user)
     post = create_post('Post title', 'This is a post content', user_profile)
     return post
 
 def quick_create_comment():
-    user = create_user('joen', 'password')
+    user = User.objects.create_user('joen', email = None, password = 'password')
     user_profile = create_user_profile(user)
-    comment_user = create_user('Yee', 'password')
+    comment_user = User.objects.create_user('Yee', email = None, password = 'password')
     comment_user_profile = create_user_profile(comment_user)
     post = create_post('Post with comment title', 'This is a content with comment content', user_profile)
     comment = create_comment('This is comment content', post, comment_user_profile)
     return comment
 
 def quick_create_user_with_two_posts_and_four_comments():
-    user = create_user('one_two_four', 'password')
+    user = User.objects.create_user('one_two_four', email = None, password = 'password')
     user_profile = create_user_profile(user)
-    comment_user1 = create_user('C1', 'password')
+    comment_user1 = User.objects.create_user('C1', email = None, password = 'password')
     comment_user1_profile = create_user_profile(comment_user1)
-    comment_user2 = create_user('C2', 'password')
+    comment_user2 = User.objects.create_user('C2', email = None, password = 'password')
     comment_user2_profile = create_user_profile(comment_user2)
     post1 = create_post('Post1', 'Post1 Content', user_profile)
     post2 = create_post('Post2', 'Post2 Content', user_profile)
@@ -81,9 +78,9 @@ class LoginTest(TestCase):
         self.assertContains(response, "Sorry, that's not a valid username or password")
             
     def test_user_with_correct_information(self):
-        create_user("user1", "password")
+        User.objects.create_user("user1", email = None, password = 'password')
         response_post = self.client.post(reverse('blogcore:login'), {'username': 'user1', 'password': 'password'})
-        self.assertEqual(response_post.status_code, 200)
+        self.assertEqual(response_post.status_code, 302)
         
 class LogoutTest(TestCase):
     
@@ -160,13 +157,12 @@ class UserListTests(TestCase):
             self.assertContains(response, string)
     
     def test_one_user(self):
-        user1 = create_user("judy", "password")
+        user1 = User.objects.create_user("judy", email = None, password = 'password')
         create_user_profile(user1)
         contains = [user1.username]
         user1.save()
         
         response = self.client.get(reverse('blogcore:profile_list'))
-        #print(response.content)  
         
         self.assertEqual(response.status_code, 200)
         for string in contains:
@@ -175,7 +171,7 @@ class UserListTests(TestCase):
     def test_twenty_users(self):
         users = []
         for i in range(20):
-            user = create_user("user" + str(i), "password")
+            user = User.objects.create_user("user" + str(i), email = None, password = 'password')
             create_user_profile(user)
             users.append(user)
             user.save()
@@ -235,34 +231,45 @@ class UserDetailViewTests(TestCase):
 class UserAutheticationTest(TestCase):
     
     def setUp(self):
-        self.client.post(reverse('blogcore:logout'))        
+        self.client.logout()
+        #self.client.post(reverse('blogcore:logout'))        
     
     def test_post_create_without_login(self):
         response = self.client.post(reverse('blogcore:post_create'), {'title': 'title', 'content': 'content'})
+        #print(response.url)
         self.assertRedirects(response, '/blogcore/login?next=/blogcore/posts/create/', status_code = 302, target_status_code = 301, msg_prefix = '')
         
     def test_post_edit_without_login(self):
         post = quick_create_post_with_user()
         response = self.client.get(reverse('blogcore:post_edit', args = (post.id, )))
+        #print(response.url)
         self.assertRedirects(response, '/blogcore/login?next=/blogcore/post/1/edit/', status_code = 302, target_status_code = 301, msg_prefix = '')
 
 class PostCreationTest(TestCase): 
-    def setUp(self):
-        create_user('user', 'password')
-        self.client.post(reverse('blogcore:login'), {'user': 'user', 'password': 'password'})        
     
-    def test_post_create_correct(self):
+    def setUp(self):
+        user = User.objects.create_user("username", email = None, password = "password")
+        create_user_profile(user)
+        login = self.client.login(username = "username", password = "password")
+        self.assertTrue(login)       
+    
+    def test_post_create_correctly(self):
         response = self.client.post(reverse('blogcore:post_create'), {'title': 'title', 'content': 'content'})
+        self.assertRedirects(response, '/blogcore/profiles/', status_code = 302, target_status_code = 200, msg_prefix = '')
 
 
 class PostEditTest(TestCase):
-    def setUp(self):
-        create_user('user', 'password')
-        self.client.post(reverse('blogcore:login'), {'user': 'user', 'password': 'password'}) 
     
-    def test_post_edit_without_login(self):
+    def setUp(self):
+        user = User.objects.create_user(username = "username", email = None, password = "password")
+        create_user_profile(user)
+        login = self.client.login(username = "username", password = "password")
+        self.assertTrue(login)
+    
+    def test_post_edit_correctly(self):
         post = quick_create_post_with_user()
         response = self.client.get(reverse('blogcore:post_edit', args = (post.id, )))
-
-        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, post.title)
+        self.assertContains(response, post.content)       
 
