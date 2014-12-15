@@ -1,15 +1,18 @@
-{% load staticfiles %}
-
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
-
-{% block title %}Create an account{% endblock %}
+{% extends "blogcore\main.html" %}
 
 {% block content %}
-  <h1>Create an account</h1>
 
+<head>
+	<title>Create an account</title>
+	<h2>Create an account</h2>
+</head>
+
+<body>
   <form action="" method="post">
       {% csrf_token %}
 	  {{ form.as_p }}
       <input type="submit" value="Create the account">
   </form>
+</body>
+
 {% endblock %}

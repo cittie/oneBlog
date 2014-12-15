@@ -1,34 +1,29 @@
-{% load staticfiles %}
+{% extends "blogcore\main.html" %}
 
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+{% block content %}
 
-
-<h1> {{ post }} </h1>
+<head>
+	<title> {{ post }} </title>
+	<H1> {{ post }} </H1>
+</head>
 
 <body> 
 	{{ post.content }}
 	<p><a href =" {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}</a></p>
+	<div> 
 	<p><a href = " {% url 'blogcore:post_edit' post.id %} "> Edit </a></p>
+	</div>
 	<ul>
-		{% for comment in post.comment_set.all %}
-			<li>
-			{{ comment }}
-			<p> {{ comment.user_profile }} </p>
-			</li>
-		{% endfor %}
+		{% if post.comment_set.exists %}
+		<p>Comments:</p>
+			{% for comment in post.comment_set.all %}
+				<li>
+				{{ comment }} | <a href =" {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ comment.user_profile }} </a>
+				</li>
+			{% endfor %}
+		{% endif %}
 	</ul>
 
-	<!---
-	<div id = "add_comment"> Add a comment </div>
-	<form action = "{% url 'blogcore:comment_create' post.id%}" method = "POST" >
-	{% csrf_token %}
-		<dive id="comment_form">
-		<p><input type="field" name="comment" </p>
-		</div>
-		<div id = "submit"><input type = "submit" value = "Submit"></div>
-	</form>
-	--->
-	{% block content %}
-	{% endblock %}
-
 </body>
+
+{% endblock %}

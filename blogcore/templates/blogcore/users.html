@@ -1,17 +1,23 @@
-{% load staticfiles %}
+{% extends "blogcore\main.html" %}
 
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+{% block content %}
 
-<H1> User List </H1>
+<head>
+	<title>User List</title>
+	<H1>User List </H1>
+</head>
 
-{% if profile_list %}
-	<ul>
-	{% for user_profile in profile_list %}
-		<li><a href=" {% url 'blogcore:profile_detail' user_profile.id %} "> {{ user_profile }} </a></li>
-	{% endfor %}
-	</ul>
-{% else %}
-	<p>No users!</p>
-{% endif %}
+<body>
+	{% if profile_list %}
+		<ul>
+		{% for user_profile in profile_list %}
+			<li><a href=" {% url 'blogcore:profile_detail' user_profile.id %} "> {{ user_profile }} </a></li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p>No users!</p>
+	{% endif %}
+</body>
 
+{% endblock %}
 

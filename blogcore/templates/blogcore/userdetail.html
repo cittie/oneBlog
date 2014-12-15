@@ -1,22 +1,28 @@
-{% load staticfiles %}
+{% extends "blogcore\main.html" %}
 
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+{% block content %}
 
-<h2> {{ user_profile }} </h2>
+<head>
+	<title> {{ user_profile }} </title>
+	<h2> {{ user_profile }} </h2>
+</head>
 
 <body>
 {% if user_profile.post_set %}
+	<p>Posts:</p>
 	{% for post in user_profile.post_set.all %}
-		<p>{{ post.title }}</p>
-		<p>{{ post.content }}</p>
+		<p><a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post.title }}</a> </p> 
+		<p> {{ post.content }}</p>
 			<ul>
 			{% if post.comment_set %}
+				<p>Comments:</p>
 				{% for comment in post.comment_set.all %}
-					<ul>{{ comment.content }}</ul>
-					<ul><a href=" {% url 'blogcore:profile_detail' comment.user_profile.id %} ">{{ comment.user_profile }}</a></ul>
+					<ul>{{ comment.content }} | <a href=" {% url 'blogcore:profile_detail' comment.user_profile.id %} ">{{ comment.user_profile }}</a></ul>
 				{% endfor %}
 			{% endif %}
 			</ul>
 	{% endfor %}
 {% endif %}
 </body>
+
+{% endblock %}

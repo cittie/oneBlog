@@ -1,13 +1,20 @@
-{% load staticfiles %}
+{% extends "blogcore\main.html" %}
 
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+{% block content %}
+
+<head>
+	<title> Posts </title>
+	<H1> Posts </H1>
+</head>
+
+<body>
 
 {% if post_list %}
 	<ul>
 	{% for post in post_list %}
 		<li>
-			<a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post.title }} </a>
-			<a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile.user.username }}  </a>
+			<post><a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post.title }} </a></post>
+			<user><a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile.user.username }}</a></user>
 		</li>
 	{% endfor %}
 	</ul>
@@ -15,8 +22,10 @@
 	<p>No blogs!</p>
 {% endif %}
 
-<p><a href = " {% url 'blogcore:post_create' %} "> Create </a></p>
+<button><p><a href = " {% url 'blogcore:post_create' %} "> Create </a></p></button>
 
-<p><a href = " {% url 'blogcore:index' %} "> Home </a></p>
+</body>
 
-<a href = "{% url 'blogcore:about' %}">About</a>
+{% endblock %}
+
+

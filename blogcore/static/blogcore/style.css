@@ -1,21 +1,24 @@
 html  {
-	font-family: monospace;
-	background: #58D3F7;
+  display: inline-block;
+  padding: 16px;
+  margin: auto;
+  max-width: 468px;
+  border: #ddd 1px solid;
+  border-top-color: #eee;
+  border-bottom-color: #bbb;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  font: bold 14px/18px Helvetica, Arial, sans-serif;
+  color: #000;
 	}
 
 head {
-	text-align: middle;
+	text-align: center;
 	font-family: serif;
 	}
 	
 body {
-	font-family: monospace;
-	/* background: #58FAF4; */
-	}
 
-post {
-	display: inline-block;
-	font: bold 20px Arial;
 	}
 	
 comment {
@@ -27,33 +30,83 @@ profile {
 	display: inline-block;
 	font: bold 24px Time New Rome;
 	}
+
+user {
+  display: inline-block;
+  padding: 2px 2px 2px 2px;
+  border: #ccc solid 1px;
+  border-radius: 3px;
+  font: bold 11px/17px Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  color: #999;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+  white-space: nowrap;
+}
 	
-post_list {
-	display: inline-block;
-	padding: 16px;
-	margin: 10px 0;
-	max-width: 468px;
-	border: #ddd 1px solid;
-	border-top-color: #eee;
-	border-bottom-color: #bbb;
-	border-radius: 5px;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-	font: bold 14px/18px Helvetica, Arial, sans-serif;
-	color: #000;
-	background: #58FAF4;
-	}
-	
-div {
-	display: inline-block;
-	padding: 16px;
-	margin: 10px 0;
-	max-width: 468px;
-	border: #ddd 1px solid;
-	border-top-color: #eee;
-	border-bottom-color: #bbb;
-	border-radius: 5px;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-	font: bold 14px/18px Helvetica, Arial, sans-serif;
-	color: #000;
-	background: #F5A9F2;
-	}
+button {
+  display: inline-block;
+  padding: 1px 3px 1px 3px;
+  border: #ccc solid 1px;
+  border-radius: 3px;
+  font: bold 11px/17px Helvetica, Arial, sans-serif;
+  text-decoration: none;
+  color: #333;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .5);
+  white-space: nowrap;
+}
+
+button:focus {
+  outline: none;
+  border-color: #0089cb;
+}
+
+post {
+  display: inline-block;
+  padding: 16px;
+  margin: 10px 0;
+  max-width: 468px;
+  border: #ddd 1px solid;
+  border-top-color: #eee;
+  border-bottom-color: #bbb;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  font: bold 14px/18px Helvetica, Arial, sans-serif;
+  color: #000;
+}
+
+post p {
+  font: normal 18px/24px Georgia, "Times New Roman", Palatino, serif;
+  margin: 0 5px 10px 0;
+}
+
+list {
+  /* Buttonish */
+  display: inline-block;
+  padding: 6px 12px 6px 30px;
+  margin: 10px 0;
+  border: #ccc solid 1px;
+  border-radius: 3px;
+  background: #f8f8f8 url(//platform.twitter.com/images/bird.png) 8px 8px no-repeat;
+ 
+  /* Text */
+  font: normal 12px/18px Helvetica, Arial, sans-serif;
+  color: #333;
+  white-space: nowrap;
+}
+
+list:hover,
+list:focus {
+  background-color: #dedede;
+}
+
+link {
+  font-weight: normal;
+  color: #666;
+  font-size: 12px;
+}
+
+div.link {
+  font-weight: normal;
+  color: #666;
+  font-size: 12px;
+}

@@ -1,7 +1,8 @@
+#from django import forms
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from blogcore.models import Post, UserProfile, Comment, PostForm, CommentForm
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -83,6 +84,15 @@ class CommentCreateView(CreateView):        #Function is not active
 '''
 def comment_create(request, post_id):
     post = get_object_or_404(Post, pk = post_id)
-    content = request.POST['content']
-    Comment.objects.create(post = post, content = content, user = request.user)
-    return redirect(reverse('blogcore:post_detail', args = (post.id, ))) 
+    if request == 'POST':
+        form = CommentForm(request.POST)
+        form.post = post
+        form.profile = UserProfile.objects.get(user = request.user)
+        if form.is_valid():
+            comment = form.save()
+            Comment.objects.create(comment = comment)
+            return redirect(reverse('blogcore:post_detail', args = (post_id, )))
+    else:
+        form = CommentForm()
+    return render(request, 'blogcore/commentcreate.html', {'form': form})
+

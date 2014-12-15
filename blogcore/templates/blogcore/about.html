@@ -1,10 +1,14 @@
-{% load staticfiles %}
+{% extends "blogcore\main.html" %}
 
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+{% block content %}
 
-<title> About </title>
-<h1>Hello, this is the about page</h1>
+<head>
+	<title> About </title>
+	<h1>Hello, this is the about page</h1>
+</head>
+
 <body>
-<p> Taz'dingo! </p>
-<ul><a href = "{% url 'blogcore:index' %}">Home</a></ul>
+	<p> Taz'dingo! </p>
 </body>
+
+{% endblock %}

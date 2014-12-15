@@ -1,6 +1,6 @@
-{% load staticfiles %}
+{% extends "blogcore\main.html" %}
 
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
+{% block content %}
 
 <head>
 	<title> OneBlog </title>
@@ -8,26 +8,18 @@
 </head>
 
 <body>
-
 {% if post_list %}
-	<ul>
 	{% for post in post_list %}
-		<li><post_list>
+		<li>
 			<post><a href=" {% url 'blogcore:post_detail' post.id %} ">{{ post }} </a></post>
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<profile><a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}  </a></profile>
-		</li></post_list>
+			<user><a href = " {% url 'blogcore:profile_detail' post.user_profile.user.id %} ">{{ post.user_profile }}  </a></user>
+		</li>
 	{% endfor %}
-	</ul>
 {% else %}
-	<post_list>
 		<p>No blogs!</p>
-	</post_list>
 {% endif %}
 
-
-<div><a href = "{% url 'blogcore:register' %}">Register</a></div>
-<div><a href = "{% url 'blogcore:login' %}">Login</a></div>
-<div><a href = "{% url 'blogcore:logout' %}">Logout</a></div>
-<div><a href = "{% url 'blogcore:about' %}">About</a></div>
 </body>
+
+{% endblock %}

@@ -1,13 +1,12 @@
-{% load staticfiles %}
-
-<link rel = "stylesheet" type = "text/css" href = "{% static 'blogcore/style.css' %}" />
-
-<head>
-	<title> Login </title>
-</head>
+{% extends "blogcore\main.html" %}
 
 {% block content %}
+<head>
+	<title>Login</title>
+	<h1>Login</h1>
+</head>
 
+<body>
   {% if form.errors %}
     <p class="error">Sorry, that's not a valid username or password</p>
   {% endif %}
@@ -27,6 +26,6 @@
 
 	<input type="submit" value="login" />
 	<input type="hidden" name="next" value="{{ next }}" />
-</form>
-
+  </form>
+</body>
 {% endblock %}
